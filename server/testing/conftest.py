@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
 
+import pytest
+from app import app, db
+
+
+@pytest.fixture(autouse=True)
+def setup_db():
+    """Create and drop tables for each test."""
+    with app.app_context():
+        db.create_all()
+        yield
+        db.session.remove()
+        db.drop_all()
+
+
 def pytest_itemcollected(item):
     par = item.parent.obj
     node = item.obj
